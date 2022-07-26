@@ -46,7 +46,8 @@ export default class InputHandler {
         case "z":
           this.keys.up = false;
           break;
-        case "ArrowDown" || "s":
+        case "ArrowDown":
+        case "s":
           this.keys.down = false;
           break;
         case "ArrowLeft":
