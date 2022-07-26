@@ -2,9 +2,14 @@ export default class Player {
   constructor(gameSize) {
     this.gameWidth = gameSize.width;
     this.gameHeight = gameSize.height;
+    this.sprite = {
+      spriteSheet: document.getElementById("spritesheet"),
+      positionX: 0,
+      positionY: 0,
+    };
     this.size = {
-      width: 32,
-      height: 32,
+      width: 200,
+      height: 200,
     };
     this.position = {
       x: this.gameWidth / 10,
@@ -30,8 +35,20 @@ export default class Player {
     this.applyGravity(gameEnvironment.gravity);
   }
   draw(ctx) {
-    ctx.fillStyle = "red";
-    ctx.fillRect(
+    /*
+    Image Source,
+    Cropping rectangle start X
+    Cropping rectangle start Y
+    Cropping rectangle size,
+    Rectangle draw position
+    Rectangle draw size
+    */
+    ctx.drawImage(
+      this.sprite.spriteSheet,
+      this.size.width * this.sprite.positionX,
+      this.size.height * this.sprite.positionY,
+      this.size.width,
+      this.size.height,
       this.position.x,
       this.position.y,
       this.size.width,
@@ -49,7 +66,6 @@ export default class Player {
           continue;
         }
         if (key === "down" && value === true) {
-          this.velocity.y = 1;
           continue;
         }
         if (key === "left" && value === true) {
