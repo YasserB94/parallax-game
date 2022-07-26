@@ -26,16 +26,12 @@ export default class Player {
       direction: "right",
     };
   }
+
   update(gameEnvironment, controls) {
     this.updateState(controls);
     this.updateSprite();
     this.updateVelocity(controls);
     this.updatePosition(gameEnvironment);
-    if (this.sprite.positionX < 8) {
-      this.sprite.positionX++;
-    } else {
-      this.sprite.positionX = 0;
-    }
   }
   updatePosition(gameEnvironment) {
     this.position.x += this.velocity.x;
@@ -76,10 +72,18 @@ export default class Player {
           continue;
         }
         if (key === "left" && value === true) {
+          if (this.boundaries.left >= this.position.x) {
+            this.state.hitLeftBoundary = true;
+            return;
+          }
           this.velocity.x = -1;
           continue;
         }
         if (key === "right" && value === true) {
+          if (this.position.x >= this.boundaries.right) {
+            this.state.hitRightBoundary = true;
+            return;
+          }
           this.velocity.x = 1;
           continue;
         }
@@ -134,12 +138,21 @@ export default class Player {
       this.state.airborn = false;
     }
   }
-
+  setMovementBoundaries(leftBoundary, RightBoundary) {
+    this.boundaries = {
+      left: leftBoundary,
+      right: RightBoundary,
+    };
+  }
   isOnBottomOfCanvas() {
     if (this.position.y + this.size.height >= this.gameHeight) {
       return true;
     } else {
       return false;
     }
+  }
+
+  getPosition() {
+    return this.position;
   }
 }
