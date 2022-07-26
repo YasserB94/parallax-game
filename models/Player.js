@@ -2,22 +2,32 @@ export default class Player {
   constructor(gameSize) {
     this.gameWidth = gameSize.width;
     this.gameHeight = gameSize.height;
-    this.position = {
-      x: 50,
-      y: 50,
-    };
     this.size = {
       width: 32,
       height: 32,
     };
+    this.position = {
+      x: this.gameWidth / 10,
+      y: this.gameHeight - this.size.height,
+    };
     this.velocity = {
-      x: 1,
-      y: 1,
+      x: 0,
+      y: 0,
     };
     this.weight = 1;
+    this.state = {
+      airborn: false,
+    };
   }
   update(gameEnvironment, controls) {
-    this.updatePosition(controls);
+    this.updateVelocity(controls);
+    this.updatePosition(gameEnvironment);
+  }
+  updatePosition(gameEnvironment) {
+    this.position.x += this.velocity.x;
+    this.position.y += this.velocity.y;
+    this.velocity.x = 0;
+    this.applyGravity(gameEnvironment.gravity);
   }
   draw(ctx) {
     ctx.fillStyle = "red";
@@ -28,34 +38,44 @@ export default class Player {
       this.size.height
     );
   }
-  updatePosition(controls) {
-    if (controls.keys.down) {
-      this.moveDown();
-    }
-    if (controls.keys.left) {
-      if (controls.keys.right) return;
-      this.moveLeft();
-    }
-    if (controls.keys.right) {
-      if (controls.keys.left) return;
-      this.moveRight();
+  updateVelocity(controls) {
+    // this.velocity.x = 0;
+    // this.velocity.y = 0;
+    for (const key in controls.keys) {
+      if (Object.hasOwnProperty.call(controls.keys, key)) {
+        const value = controls.keys[key];
+        if (key === "up" && value === true) {
+          this.jump();
+          continue;
+        }
+        if (key === "down" && value === true) {
+          this.velocity.y = 1;
+          continue;
+        }
+        if (key === "left" && value === true) {
+          this.velocity.x = -1;
+          continue;
+        }
+        if (key === "right" && value === true) {
+          this.velocity.x = 1;
+          continue;
+        }
+      }
     }
   }
-  moveDown() {
-    if (this.isOnBottomOfCanvas()) {
-      return;
+  jump() {
+    if (!this.isOnBottomOfCanvas()) return;
+    this.velocity.y -= 20;
+  }
+  applyGravity(gravity) {
+    if (!this.isOnBottomOfCanvas()) {
+      this.velocity.y += gravity * this.weight;
     } else {
-      this.position.y += this.velocity.y;
+      this.velocity.y = 0;
     }
-  }
-  moveLeft() {
-    this.position.x -= this.velocity.x;
-  }
-  moveRight() {
-    this.position.x += this.velocity.x;
   }
   isOnBottomOfCanvas() {
-    if (this.position.y >= this.gameHeight - this.size.height) {
+    if (this.position.y + this.size.height >= this.gameHeight) {
       return true;
     } else {
       return false;
