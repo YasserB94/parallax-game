@@ -14,7 +14,6 @@ export default class InputHandler {
   }
   addKeyDownEventListeners() {
     window.addEventListener("keydown", (e) => {
-      console.log(this.keys);
       //TODO: REFRACTOR KEYS INTO SETTINGS FOR WASD - ARROWKEYS - ZQSD
       switch (e.key) {
         case "ArrowUp" || "w" || "z":
